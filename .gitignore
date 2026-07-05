@@ -1,0 +1,12 @@
+# Build Output
+build/
+
+# Visual Studio per-user state
+.vs/
+
+# Local editor/OS junk that varies per machine
+*.user
+Thumbs.db
+
+# Ignore the hello directory
+hello/

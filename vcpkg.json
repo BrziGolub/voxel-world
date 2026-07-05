@@ -1,0 +1,7 @@
+{
+  "name": "hello",
+  "dependencies": [
+    "fmt"
+  ],
+  "builtin-baseline": "3b0889cf230111ed798c9f5c4511a87cdbdc21ea"
+}
