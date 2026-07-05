@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: windows-latest
     strategy:
-      fail_fast: false
+      fail-fast: false
       matrix:
         present: [debug, release]
     steps:
