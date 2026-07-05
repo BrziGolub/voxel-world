@@ -19,6 +19,9 @@ jobs:
       - name: Point VCPKG_ROOT at runner's vcpkg
         run: echo "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
 
+      - name: Update vcpkg registry (runner's clone may predate our baseline)
+        run: git -C $env:VCPKG_ROOT fetch origin
+
       - name: Configure
         run: cmake --preset ${{ matrix.preset }}
 
