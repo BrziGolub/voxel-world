@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        present: [debug, release]
+        preset: [debug, release]
     steps:
       - uses: actions/checkout@v4
         with:
