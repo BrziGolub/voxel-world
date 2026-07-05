@@ -1,5 +1,5 @@
 {
-  "name": "hello",
+  "name": "voxel-world",
   "dependencies": [
     "fmt"
   ],

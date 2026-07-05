@@ -58,7 +58,7 @@
   CMakeLists.txt
   ```
 - [x] Each folder = one CMake static library target with explicit dependencies (enforces layering!)
-- [ ] Git + .gitignore + Git LFS for /assets
+- [x] Git + .gitignore + Git LFS for /assets
 - [ ] GitHub Actions CI: builds Debug + Release on every push
 - [ ] Install PIX, RenderDoc, Tracy
 - [x] Decide conventions and write them in `CONVENTIONS.md`: C++20, exceptions on/off, naming style, Y-up right/left-handed coordinates, units (1.0f = 1 meter = 1 block)
@@ -263,5 +263,6 @@ Pick by interest — each is a deep-dive:
 | Date | Phase | Notes / blockers / wins |
 |------|-------|-------------------------|
 | 2026-07-05 | 0 | Repo structure + layered CMake targets created (ve_core, ve_platform, ve_rhi, ve_renderer, game), linked downward-only. Global CONVENTIONS §1 flags applied (C++20, /W4 /WX /permissive- /EHs-c- /GR-, _HAS_EXCEPTIONS=0). Added fmt via vcpkg, switched triplet to x64-windows-static-md. Milestone met: game/main.cpp calls VE_LOG_INFO (engine/core/log.h/.cpp), builds and runs clean with zero warnings. Hit/fixed: missing `find_package(fmt CONFIG REQUIRED)`, typos (`fmr::string_view`, `fmStr`, `_HAS_EXEPTIONS`), and fmt v12's deprecated implicit `format_string`→`string_view` conversion (fixed via explicit `fmtStr.str`, caught by /WX). |
+| 2026-07-05 | 0 | Initialized git repo, added .gitignore (build dirs, vcpkg_installed, CMakePresets.json), configured Git LFS for assets/. |
 
 *Rule of thumb: if stuck > 3 days on the same bug, capture it in PIX/RenderDoc, reduce to minimal repro, and re-read the relevant sample. Sync bugs and descriptor bugs cause 90% of early D3D12 pain.*
