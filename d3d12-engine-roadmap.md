@@ -59,7 +59,7 @@
   ```
 - [x] Each folder = one CMake static library target with explicit dependencies (enforces layering!)
 - [x] Git + .gitignore + Git LFS for /assets
-- [ ] GitHub Actions CI: builds Debug + Release on every push
+- [x] GitHub Actions CI: builds Debug + Release on every push
 - [ ] Install PIX, RenderDoc, Tracy
 - [x] Decide conventions and write them in `CONVENTIONS.md`: C++20, exceptions on/off, naming style, Y-up right/left-handed coordinates, units (1.0f = 1 meter = 1 block)
 
@@ -264,5 +264,6 @@ Pick by interest — each is a deep-dive:
 |------|-------|-------------------------|
 | 2026-07-05 | 0 | Repo structure + layered CMake targets created (ve_core, ve_platform, ve_rhi, ve_renderer, game), linked downward-only. Global CONVENTIONS §1 flags applied (C++20, /W4 /WX /permissive- /EHs-c- /GR-, _HAS_EXCEPTIONS=0). Added fmt via vcpkg, switched triplet to x64-windows-static-md. Milestone met: game/main.cpp calls VE_LOG_INFO (engine/core/log.h/.cpp), builds and runs clean with zero warnings. Hit/fixed: missing `find_package(fmt CONFIG REQUIRED)`, typos (`fmr::string_view`, `fmStr`, `_HAS_EXEPTIONS`), and fmt v12's deprecated implicit `format_string`→`string_view` conversion (fixed via explicit `fmtStr.str`, caught by /WX). |
 | 2026-07-05 | 0 | Initialized git repo, added .gitignore (build dirs, vcpkg_installed, CMakePresets.json), configured Git LFS for assets/. |
+| 2026-07-05 | 0 | git init + .gitignore (build/, .vs/, hello/) + LFS tracking for asset types (.gitattributes). Pushed to GitHub (BrziGolub/voxel-world). GitHub Actions CI: Debug + Release matrix on windows-latest. Three CI bugs fixed in sequence: (1) `fail_fast` -> `fail-fast` (schema rejects unknown keys before any VM starts); (2) matrix key typo `present` vs `${{ matrix.preset }}` - GH expressions expand silently to empty string, no error; (3) vcpkg baseline commit missing from runner's preinstalled clone -> added `git fetch` step. Verified CI catches real code errors: pushed unused variable, C4101->C2220 via /WX, both jobs red, then `git revert` -> green. Lesson: read the topmost error only; the rest is cascade. |
 
 *Rule of thumb: if stuck > 3 days on the same bug, capture it in PIX/RenderDoc, reduce to minimal repro, and re-read the relevant sample. Sync bugs and descriptor bugs cause 90% of early D3D12 pain.*

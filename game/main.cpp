@@ -1,6 +1,8 @@
-#include "engine/core/log.h"
+#include "engine/platform/platform.h"
 
 int main() {
-	VE_LOG_INFO("voxel-world booting, {} + {} = {}", 2, 2, 4);
+	// Initialize platform (SDL)
+	if (!ve::platform::Init()) return 1;
+	ve::platform::Shutdown();
 	return 0;
 }
