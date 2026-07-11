@@ -71,11 +71,11 @@
 
 **Learning goals:** layering discipline, main loop structure, input handling.
 
-- [ ] Add SDL3 via vcpkg (or raw Win32 if you want that learning experience)
-- [ ] `Platform::Window` class — create/destroy, poll events, expose native handle (HWND) *only* through an opaque getter used by RHI
+- [x] Add SDL3 via vcpkg (or raw Win32 if you want that learning experience)
+- [x] `Platform::Window` class — create/destroy, poll events, expose native handle (HWND) *only* through an opaque getter used by RHI
 - [ ] Input state: keyboard + mouse (current/previous frame state, pressed/held/released queries)
-- [ ] Fixed-timestep main loop skeleton: `while (running) { poll(); update(dt); render(); }`
-- [ ] High-resolution timer in core (QueryPerformanceCounter behind an interface)
+- [x] Fixed-timestep main loop skeleton: `while (running) { poll(); update(dt); render(); }`
+- [x] High-resolution timer in core (QueryPerformanceCounter behind an interface)
 - [ ] Assert macro that breaks in debugger; log to console + file
 
 **Milestone:** A window opens, ESC closes it, WASD press/release events print to your log at a stable tick rate.
@@ -265,5 +265,7 @@ Pick by interest — each is a deep-dive:
 | 2026-07-05 | 0 | Repo structure + layered CMake targets created (ve_core, ve_platform, ve_rhi, ve_renderer, game), linked downward-only. Global CONVENTIONS §1 flags applied (C++20, /W4 /WX /permissive- /EHs-c- /GR-, _HAS_EXCEPTIONS=0). Added fmt via vcpkg, switched triplet to x64-windows-static-md. Milestone met: game/main.cpp calls VE_LOG_INFO (engine/core/log.h/.cpp), builds and runs clean with zero warnings. Hit/fixed: missing `find_package(fmt CONFIG REQUIRED)`, typos (`fmr::string_view`, `fmStr`, `_HAS_EXEPTIONS`), and fmt v12's deprecated implicit `format_string`→`string_view` conversion (fixed via explicit `fmtStr.str`, caught by /WX). |
 | 2026-07-05 | 0 | Initialized git repo, added .gitignore (build dirs, vcpkg_installed, CMakePresets.json), configured Git LFS for assets/. |
 | 2026-07-05 | 0 | git init + .gitignore (build/, .vs/, hello/) + LFS tracking for asset types (.gitattributes). Pushed to GitHub (BrziGolub/voxel-world). GitHub Actions CI: Debug + Release matrix on windows-latest. Three CI bugs fixed in sequence: (1) `fail_fast` -> `fail-fast` (schema rejects unknown keys before any VM starts); (2) matrix key typo `present` vs `${{ matrix.preset }}` - GH expressions expand silently to empty string, no error; (3) vcpkg baseline commit missing from runner's preinstalled clone -> added `git fetch` step. Verified CI catches real code errors: pushed unused variable, C4101->C2220 via /WX, both jobs red, then `git revert` -> green. Lesson: read the topmost error only; the rest is cascade. |
+| 2026-07-11 | 1 | Implemented platform Window class that utilizes SDL under the hood. Learned about forward declaration for including SDL_Window struct type, C++ lets me declare that a type exists without defining it. Starting convention decision forbids constructors that can fail. Window owns a resource, so copying it must be illegal, so copy constructor must be deleted, this is a first time meeting with *Rule of Five*. Implemented window.cpp with header defined functions containing constructors, destructors, Create, Destroy, PollEvents, and HWND opaque getter. Pattern worth knowing: **RAII** (Resource Acquisition Is Initialization), this means tieing a resource's lifetime to an object's lifetime (Destructor calls Destroy). Implemented poll events drain loop. Learned that Destroy functions is bad to be called twice as that means pointer to already freed window will be sent to SDL handle, so used standard idempotent-release idiom. |
+| 2026-07-11 | 1 | time header that has NowSeconds() function getter that fetches high-resolution current time in seconds. Internally uses QueryPerformanceFrequency and QueryPerformanceCounter and stores in private struct ClockState initial values. clock.frequency uses inverted frequency as this is per-frame function and division is the slowest arithmetic op. Time is calculated: NowSeconds = `(now - clock.base) * clock.inverse_frequency`. Main loop now updates elapsed time (dt). Learned about *spiral-of-death* and how to break it by clamping slower frames and accumulating frame times. Rate counter that prints steady ticks/second |
 
 *Rule of thumb: if stuck > 3 days on the same bug, capture it in PIX/RenderDoc, reduce to minimal repro, and re-read the relevant sample. Sync bugs and descriptor bugs cause 90% of early D3D12 pain.*

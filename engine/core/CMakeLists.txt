@@ -1,5 +1,6 @@
 add_library(ve_core STATIC
 	log.cpp
+	time.cpp
 )
 find_package(fmt CONFIG REQUIRED)
 target_include_directories(ve_core PUBLIC ${CMAKE_SOURCE_DIR})
