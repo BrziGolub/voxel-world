@@ -1,18 +1,23 @@
-/*
-Functions to look up for in docs:
-    SDL_CreateWindow
-    SDL_DestroyWindow
-    SDL_PollEvent
-        with SDL_Event: SDL_EVENT_QUIT and SDL_EVENT_WINDOW_CLOSE_REQUESTED
-        Drain poll events in while -> (SDL_PollEvent(&e))
-    GetNativeHandle: search for SDL_PROP_WINDOW_WIN32_HWND_POINTER
-*/
-
-#include "engine/platform/window.h"
 #include "engine/core/log.h"
+#include "engine/platform/window.h"
+#include "engine/platform/input.h"
 #include <SDL3/SDL.h>
 
 namespace ve::platform {
+
+    namespace {
+        // Helper mapping function
+        Key MapScancode(SDL_Scancode sc) {
+            switch (sc) {
+            case SDL_SCANCODE_W:    return Key::W;
+            case SDL_SCANCODE_A:    return Key::A;
+            case SDL_SCANCODE_S:    return Key::S;
+            case SDL_SCANCODE_D:    return Key::D;
+            case SDL_SCANCODE_ESCAPE:    return Key::Escape;
+            default:    return Key::Count; // unmapped
+            }
+        }
+    }
 
     Window::~Window() {
         Destroy();
@@ -39,7 +44,7 @@ namespace ve::platform {
         }
     }
 
-    void Window::PollEvents() {
+    void Window::PollEvents(Input& input) {
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -52,7 +57,13 @@ namespace ve::platform {
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
                 m_shouldClose = true;
                 break;
-            
+
+            case SDL_EVENT_KEY_DOWN:
+            case SDL_EVENT_KEY_UP: {
+                const Key k = MapScancode(event.key.scancode);
+                if (k != Key::Count) input.SetKey(k, event.type == SDL_EVENT_KEY_DOWN);
+                break;
+            }
             default:
                 break;
             }
@@ -61,6 +72,10 @@ namespace ve::platform {
     
     bool Window::ShouldClose() const {
         return m_shouldClose;
+    }
+
+    void Window::RequestClose() {
+        m_shouldClose = true;
     }
 
     void* Window::GetNativeHandle() const {

@@ -5,6 +5,8 @@ struct SDL_Window;
 
 namespace ve::platform {
 
+    class Input;
+
     struct WindowDesc {
         const char* title = "voxel-world";
         std::uint32_t width = 1280;
@@ -22,8 +24,9 @@ namespace ve::platform {
         bool Create(const WindowDesc& desc);
         void Destroy();
 
-        void PollEvents(); // Drain SDL's event queue
+        void PollEvents(Input& input); // Drain SDL's event queue
         bool ShouldClose() const; // Did the user ask to quit?
+        void RequestClose(); // Setter function for quitting
 
         void* GetNativeHandle() const; // HWND, opaquely - for RHI later
 

@@ -2,6 +2,7 @@
 #include "engine/core/log.h"
 #include "engine/platform/platform.h"
 #include "engine/platform/window.h"
+#include "engine/platform/input.h"
 
 int main() {
 	// Initialize platform (SDL)
@@ -10,6 +11,9 @@ int main() {
 	// Window setup
 	ve::platform::Window window;
 	ve::platform::WindowDesc windowDesc;
+
+	// Input
+	ve::platform::Input input;
 
 	// Create Window
 	if (!window.Create(windowDesc)) {
@@ -28,7 +32,16 @@ int main() {
 	int tickCount = 0;
 	double nextReport = ve::core::NowSeconds() + 1.0; // One second from now
 
-	// Main Game Loop
+	// Table of key/name pairs
+	struct KeyName { ve::platform::Key key; const char* name; };
+	const KeyName wasdKeys[] = {
+		{ ve::platform::Key::W, "W" },
+		{ ve::platform::Key::A, "A" },
+		{ ve::platform::Key::S, "S" },
+		{ ve::platform::Key::D, "D" }
+	};
+
+	// Frame Loop
 	while (!window.ShouldClose()) {
 
 		const double now = ve::core::NowSeconds();
@@ -39,10 +52,19 @@ int main() {
 
 		accumulator += frameTime;
 
-		window.PollEvents();
+		window.PollEvents(input);
 
 		while (accumulator >= dt) {
+
+			// Input queries
+			if (input.WasPressed(ve::platform::Key::Escape)) window.RequestClose();
+			for (const auto& [key, name] : wasdKeys) {
+				if (input.WasPressed(key)) VE_LOG_INFO("tick: {}: {} pressed", tickCount, name);
+				if (input.WasReleased(key)) VE_LOG_INFO("tick: {}: {} released", tickCount, name);
+			}
+
 			++tickCount;
+			input.AdvanceSnapshot(); // consume: this tick's edges become "previous"
 			accumulator -= dt;
 		}
 
