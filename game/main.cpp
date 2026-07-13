@@ -1,5 +1,6 @@
 #include "engine/core/time.h"
 #include "engine/core/log.h"
+#include "engine/core/assert.h"
 #include "engine/platform/platform.h"
 #include "engine/platform/window.h"
 #include "engine/platform/input.h"
@@ -46,6 +47,7 @@ int main() {
 
 		const double now = ve::core::NowSeconds();
 		double frameTime = now - lastTime;
+		VE_ASSERT(frameTime >= 0.0, "time ran backwards: frameTime = {}", frameTime);
 		lastTime = now;
 
 		if (frameTime > 0.25) frameTime = 0.25;
