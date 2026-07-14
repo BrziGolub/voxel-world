@@ -10,3 +10,6 @@ Thumbs.db
 
 # Ignore the hello directory
 hello/
+
+# Ignore log file
+*.log
